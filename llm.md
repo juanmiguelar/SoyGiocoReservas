@@ -6,7 +6,7 @@ Este archivo provee un resumen del proyecto **SoyGiocoReservas** para ayudar a l
 
 - Aplicación hecha en **Vue 3** y **Vuetify** pensada para compilarse con **Capacitor** a Android.
 - Maneja registros de pagos y asistencias de clientes utilizando `localStorage` como persistencia local.
-- No depende de un backend ni de bases de datos externas.
+- Se incluye un `script.gs` para sincronizar con Google Sheets cuando se requiere persistencia en línea.
 
 ## Directorios principales
 
@@ -15,6 +15,7 @@ Este archivo provee un resumen del proyecto **SoyGiocoReservas** para ayudar a l
 - `src/examples/` – componentes de ejemplo escritos en React (como `AttendanceTable.tsx`) que muestran el patrón de tabla colapsable.
 - `src/router/` – define las rutas disponibles en la aplicación.
 - `src/stores/` – stores de Pinia con persistencia automática en `localStorage`.
+- `appScript/` – contiene un script de Google Apps Script para trabajar con dos hojas (`pagos` y `asistencias`).
 
 ## Funcionalidades recientes
 
@@ -32,6 +33,7 @@ Este archivo provee un resumen del proyecto **SoyGiocoReservas** para ayudar a l
 
 - Inicializar con `npx cap init` y agregar la plataforma Android con `npx cap add android`.
 - Luego de compilar (`npm run build`), sincronizar cambios con `npx cap sync android` y abrir Android Studio con `npx cap open android`.
+
 
 ## API con Google Apps Script
 
