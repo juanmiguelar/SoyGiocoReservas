@@ -43,7 +43,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import AsistenciaForm from '../components/AsistenciaForm.vue'
 import { useAsistenciasStore, Asistencia } from '../stores/asistencias'
 
@@ -51,6 +51,10 @@ const asistenciasStore = useAsistenciasStore()
 const dialog = ref(false)
 const current = ref<Asistencia | null>(null)
 const expanded = ref<Asistencia[]>([])
+
+onMounted(() => {
+  asistenciasStore.fetchRemote()
+})
 
 const headers = [
   { title: 'Cliente', key: 'cliente' },
