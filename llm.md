@@ -11,9 +11,16 @@ Este archivo provee un resumen del proyecto **SoyGiocoReservas** para ayudar a l
 ## Directorios principales
 
 - `src/components/` – componentes reutilizables para formularios CRUD.
-- `src/views/` – vistas de los módulos **Pagos** y **Asistencias**.
+- `src/views/` – vistas de los módulos **Pagos** y **Asistencias**. Incluyen tablas con filas expansibles para ver detalles adicionales.
+- `src/examples/` – componentes de ejemplo escritos en React (como `AttendanceTable.tsx`) que muestran el patrón de tabla colapsable.
 - `src/router/` – define las rutas disponibles en la aplicación.
 - `src/stores/` – stores de Pinia con persistencia automática en `localStorage`.
+
+## Funcionalidades recientes
+
+- Tablas en **Vuetify** con filas colapsables para mostrar los datos completos de cada registro.
+- Menús contextuales en cada fila para editar o eliminar.
+- Ejemplo en React (`AttendanceTable.tsx`) que replica esta idea utilizando **MUI**.
 
 ## Ejecución básica
 
