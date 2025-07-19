@@ -1,0 +1,18 @@
+meta {
+  name: Obtener
+  type: http
+  seq: 3
+}
+
+get {
+  url: https://script.google.com/macros/s/AKfycbwnIipN9UWofaRWAXm-H9k4JFyRqr60G8pWTbWvEw2sR6zm-U6LHiJvglmTtJlJA4EZ/exec
+  body: none
+  auth: none
+}
+
+body:json {
+  {
+    "action": "POST",
+    "nombre": "fulano"
+  }
+}
