@@ -43,7 +43,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import PagoForm from '../components/PagoForm.vue'
 import { usePagosStore, Pago } from '../stores/pagos'
 
@@ -51,6 +51,10 @@ const pagosStore = usePagosStore()
 const dialog = ref(false)
 const current = ref<Pago | null>(null)
 const expanded = ref<Pago[]>([])
+
+onMounted(() => {
+  pagosStore.fetchRemote()
+})
 
 const headers = [
   { title: 'Cliente', key: 'cliente' },

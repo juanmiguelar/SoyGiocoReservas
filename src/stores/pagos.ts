@@ -32,5 +32,20 @@ export const usePagosStore = defineStore('pagos', () => {
     pagos.value.splice(index, 1)
   }
 
-  return { pagos, add, update, remove }
+  async function fetchRemote() {
+    try {
+      const resp = await fetch(
+        'https://script.google.com/macros/s/AKfycbwnIipN9UWofaRWAXm-H9k4JFyRqr60GpWTbWvEw2sR6zm-U6LHiJvglmTtJlJA4EZ/exec?token=supersecreto123&sheet=pagos'
+      )
+      if (!resp.ok) throw new Error('Network response was not ok')
+      const data = await resp.json()
+      if (Array.isArray(data)) {
+        pagos.value = data
+      }
+    } catch (err) {
+      console.error('Error fetching pagos', err)
+    }
+  }
+
+  return { pagos, add, update, remove, fetchRemote }
 })

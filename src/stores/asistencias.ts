@@ -33,5 +33,20 @@ export const useAsistenciasStore = defineStore('asistencias', () => {
     asistencias.value.splice(index, 1)
   }
 
-  return { asistencias, add, update, remove }
+  async function fetchRemote() {
+    try {
+      const resp = await fetch(
+        'https://script.google.com/macros/s/AKfycbwnIipN9UWofaRWAXm-H9k4JFyRqr60GpWTbWvEw2sR6zm-U6LHiJvglmTtJlJA4EZ/exec?token=supersecreto123&sheet=asistencias'
+      )
+      if (!resp.ok) throw new Error('Network response was not ok')
+      const data = await resp.json()
+      if (Array.isArray(data)) {
+        asistencias.value = data
+      }
+    } catch (err) {
+      console.error('Error fetching asistencias', err)
+    }
+  }
+
+  return { asistencias, add, update, remove, fetchRemote }
 })
