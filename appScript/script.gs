@@ -1,12 +1,29 @@
-const SHEET_NAME = 'reservas';
-const AUTH_TOKEN = 'supersecreto123'; 
+// Nombre de las hojas que utilizaremos en el Spreadsheet. Cada hoja debe tener
+// una fila de encabezados con los campos que se manejan en la aplicación.
+// "pagos" utiliza las columnas:
+//   id, cliente, contacto, pago1, pago2, pendientes, correo, cedula, telefono
+// "asistencias" utiliza las columnas:
+//   id, cliente, asistente, taller, disenoElegido, disenoApoyo,
+//   disenoRealizado, bienvenida, recordatorio
+const SHEETS = {
+  pagos: 'pagos',
+  asistencias: 'asistencias',
+};
+const AUTH_TOKEN = 'supersecreto123';
+
+// Obtiene la hoja correspondiente al nombre indicado en el atributo `sheet`.
+// Se asume que siempre se enviará un valor válido desde el cliente.
+function getSheetByType(type) {
+  const sheetName = SHEETS[String(type).toLowerCase()];
+  return SpreadsheetApp.getActiveSpreadsheet().getSheetByName(sheetName);
+}
 
 // Entrada GET: obtener todas las filas o una por ID
 function doGet(e) {
   if (!isAuthorized(e)) return jsonResponse({ status: 401, error: "No autorizado" });
 
   const id = e.parameter.id;
-  const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(SHEET_NAME);
+  const sheet = getSheetByType(e.parameter.sheet);
   const data = sheet.getDataRange().getValues();
   const headers = data[0];
 
@@ -46,7 +63,7 @@ function doPost(e) {
 
 // Crear nueva fila
 function handleCreate(payload) {
-  const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(SHEET_NAME);
+  const sheet = getSheetByType(payload.sheet);
   const headers = sheet.getDataRange().getValues()[0];
   const id = Utilities.getUuid();
   const newRow = [id];
@@ -62,7 +79,7 @@ function handleUpdate(payload) {
   const id = payload.id;
   if (!id) return jsonResponse({ status: 400, error: "Falta 'id'" });
 
-  const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(SHEET_NAME);
+  const sheet = getSheetByType(payload.sheet);
   const data = sheet.getDataRange().getValues();
   const headers = data[0];
 
@@ -85,7 +102,7 @@ function handleDelete(payload) {
   const id = payload.id;
   if (!id) return jsonResponse({ status: 400, error: "Falta 'id'" });
 
-  const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(SHEET_NAME);
+  const sheet = getSheetByType(payload.sheet);
   const data = sheet.getDataRange().getValues();
 
   for (let i = 1; i < data.length; i++) {
