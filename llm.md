@@ -34,9 +34,13 @@ Este archivo provee un resumen del proyecto **SoyGiocoReservas** para ayudar a l
 - Inicializar con `npx cap init` y agregar la plataforma Android con `npx cap add android`.
 - Luego de compilar (`npm run build`), sincronizar cambios con `npx cap sync android` y abrir Android Studio con `npx cap open android`.
 
-## Uso del script de Google Sheets
 
-El archivo `appScript/script.gs` expone endpoints para crear, actualizar y eliminar registros en dos hojas llamadas **pagos** y **asistencias**. Cada llamada debe incluir el parámetro `sheet` y un token de autorización.
+## API con Google Apps Script
+
+- El archivo `appScript/script.gs` implementa una API REST sencilla sobre la hoja de cálculo `reservas`.
+- Las funciones `doGet` y `doPost` permiten consultar, crear, actualizar y eliminar filas.
+- Se valida un token secreto (`AUTH_TOKEN`) enviado por query string o en el cuerpo de la petición.
+- Las respuestas se generan en formato JSON usando `ContentService`.
 
 ---
 Este proyecto se distribuye bajo la licencia **MIT**.
