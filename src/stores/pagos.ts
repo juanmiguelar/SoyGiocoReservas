@@ -1,6 +1,5 @@
 import { defineStore } from 'pinia'
 import { ref, watch } from 'vue'
-import fetchJsonp from 'fetch-jsonp'
 
 export interface Pago {
   cliente: string
@@ -37,18 +36,16 @@ export const usePagosStore = defineStore('pagos', () => {
 
   async function fetchRemote() {
     try {
-      const resp = await fetchJsonp(
-        `${API_URL}?token=${TOKEN}&sheet=pagos`,
-        { jsonpCallback: 'callback' }
+      const resp = await fetch(
+        `${API_URL}?token=${TOKEN}&sheet=pagos`
       )
+      if (!resp.ok) throw new Error('Network response was not ok')
       const data = await resp.json()
-      if (Array.isArray(data.params)) {
-        pagos.value = data.params
-      } else {
-        throw new Error('Respuesta inesperada')
+      if (Array.isArray(data)) {
+        pagos.value = data
       }
-    } catch (err: any) {
-      console.error(err)
+    } catch (err) {
+      console.error('Error fetching pagos', err)
     }
   }
   

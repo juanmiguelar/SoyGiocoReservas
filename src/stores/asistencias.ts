@@ -1,6 +1,5 @@
 import { defineStore } from 'pinia'
 import { ref, watch } from 'vue'
-import fetchJsonp from 'fetch-jsonp'
 
 export interface Asistencia {
   cliente: string
@@ -37,21 +36,19 @@ export const useAsistenciasStore = defineStore('asistencias', () => {
   }
 
   async function fetchRemote() {
-      try {
-        const resp = await fetchJsonp(
-          `${API_URL}?token=${TOKEN}&sheet=pagos`,
-          { jsonpCallback: 'callback' }
-        )
-        const data = await resp.json()
-        if (Array.isArray(data.params)) {
-          asistencias.value = data.params
-        } else {
-          throw new Error('Respuesta inesperada')
-        }
-      } catch (err: any) {
-        console.error(err)
+    try {
+      const resp = await fetch(
+        `${API_URL}?token=${TOKEN}&sheet=asistencias`
+      )
+      if (!resp.ok) throw new Error('Network response was not ok')
+      const data = await resp.json()
+      if (Array.isArray(data)) {
+        asistencias.value = data
       }
+    } catch (err) {
+      console.error('Error fetching asistencias', err)
     }
+  }
 
   return { asistencias, add, update, remove, fetchRemote }
 })
