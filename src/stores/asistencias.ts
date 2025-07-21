@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref, watch } from 'vue'
+import fetchJsonp from 'fetch-jsonp'
 
 export interface Asistencia {
   cliente: string
@@ -13,6 +14,8 @@ export interface Asistencia {
 }
 
 const STORAGE_KEY = 'asistencias'
+const API_URL = 'https://script.google.com/macros/s/AKfycbwnIipN9UWofaRWAXm-H9k4JFyRqr60GpWTbWvEw2sR6zm-U6LHiJvglmTtJlJA4EZ/exec'
+const TOKEN   = 'supersecreto123'
 
 export const useAsistenciasStore = defineStore('asistencias', () => {
   const asistencias = ref<Asistencia[]>(JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]"))
@@ -34,19 +37,21 @@ export const useAsistenciasStore = defineStore('asistencias', () => {
   }
 
   async function fetchRemote() {
-    try {
-      const resp = await fetch(
-        'https://script.google.com/macros/s/AKfycbwnIipN9UWofaRWAXm-H9k4JFyRqr60GpWTbWvEw2sR6zm-U6LHiJvglmTtJlJA4EZ/exec?token=supersecreto123&sheet=asistencias'
-      )
-      if (!resp.ok) throw new Error('Network response was not ok')
-      const data = await resp.json()
-      if (Array.isArray(data)) {
-        asistencias.value = data
+      try {
+        const resp = await fetchJsonp(
+          `${API_URL}?token=${TOKEN}&sheet=pagos`,
+          { jsonpCallback: 'callback' }
+        )
+        const data = await resp.json()
+        if (Array.isArray(data.params)) {
+          asistencias.value = data.params
+        } else {
+          throw new Error('Respuesta inesperada')
+        }
+      } catch (err: any) {
+        console.error(err)
       }
-    } catch (err) {
-      console.error('Error fetching asistencias', err)
     }
-  }
 
   return { asistencias, add, update, remove, fetchRemote }
 })
