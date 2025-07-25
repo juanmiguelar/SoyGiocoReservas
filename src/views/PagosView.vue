@@ -4,10 +4,11 @@
     <v-data-table
       :items="pagosStore.pagos"
       :headers="headers"
-      item-value="cliente"
+      item-value="idCliente"
       expand-on-click
       :item-props="() => ({ class: 'cursor-pointer' })"
       v-model:expanded="expanded"
+      @update:expanded="onExpanded"
     >
       <template #item.actions="{ index }">
         <v-menu @click.stop>
@@ -50,7 +51,11 @@ import { usePagosStore, Pago } from '../stores/pagos'
 const pagosStore = usePagosStore()
 const dialog = ref(false)
 const current = ref<Pago | null>(null)
-const expanded = ref<Pago[]>([])
+const expanded = ref<string[]>([])
+
+function onExpanded(ids: string[]) {
+  expanded.value = ids.length ? [ids.at(-1)!] : []
+}
 
 onMounted(() => {
   pagosStore.fetchRemote()
