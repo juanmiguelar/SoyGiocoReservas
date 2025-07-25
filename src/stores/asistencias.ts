@@ -15,12 +15,14 @@ export interface Asistencia {
 const STORAGE_KEY = 'asistencias'
 
 // Configuración para consumir la API de Google Sheets
-import { SPREADSHEET_ID, API_KEY, API_BASE, OAUTH_ACCESS_TOKEN } from '../secrets'
+import { SPREADSHEET_ID, API_KEY, API_BASE } from '../secrets'
+import { useGoogleAuthStore } from './googleAuth'
 
 const SHEET_NAME = 'asistencias'
 let sheetId: number | null = null
 
 export const useAsistenciasStore = defineStore('asistencias', () => {
+  const authStore = useGoogleAuthStore()
   const asistencias = ref<Asistencia[]>(JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]"))
   const headers = ref<string[]>([])
 
@@ -47,7 +49,7 @@ export const useAsistenciasStore = defineStore('asistencias', () => {
       const range = `${SHEET_NAME}!A:Z`
     const url = `${API_BASE}/${SPREADSHEET_ID}/values/${encodeURIComponent(range)}?key=${API_KEY}`
     const resp = await fetch(url, {
-      headers: { 'Authorization': `Bearer ${OAUTH_ACCESS_TOKEN}` }
+      headers: { 'Authorization': `Bearer ${authStore.token}` }
     })
       const data = await resp.json()
       if (Array.isArray(data.values)) {
@@ -73,7 +75,7 @@ export const useAsistenciasStore = defineStore('asistencias', () => {
     try {
     const metaUrl = `${API_BASE}/${SPREADSHEET_ID}?fields=sheets.properties&key=${API_KEY}`
     const resp = await fetch(metaUrl, {
-      headers: { 'Authorization': `Bearer ${OAUTH_ACCESS_TOKEN}` }
+      headers: { 'Authorization': `Bearer ${authStore.token}` }
     })
       const data = await resp.json()
       const sheet = data.sheets.find((s: any) => s.properties.title === SHEET_NAME)
@@ -97,7 +99,7 @@ export const useAsistenciasStore = defineStore('asistencias', () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${OAUTH_ACCESS_TOKEN}`
+          'Authorization': `Bearer ${authStore.token}`
         },
         body: JSON.stringify(body)
       })
@@ -129,7 +131,7 @@ export const useAsistenciasStore = defineStore('asistencias', () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${OAUTH_ACCESS_TOKEN}`
+          'Authorization': `Bearer ${authStore.token}`
         },
         body: JSON.stringify(body)
       })

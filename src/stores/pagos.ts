@@ -15,12 +15,14 @@ export interface Pago {
 const STORAGE_KEY = 'pagos'
 
 // Configuración para consumir la API de Google Sheets
-import { SPREADSHEET_ID, API_KEY, API_BASE, OAUTH_ACCESS_TOKEN } from '../secrets'
+import { SPREADSHEET_ID, API_KEY, API_BASE } from '../secrets'
+import { useGoogleAuthStore } from './googleAuth'
 
 const SHEET_NAME = 'pagos'
 let sheetId: number | null = null
 
 export const usePagosStore = defineStore('pagos', () => {
+  const authStore = useGoogleAuthStore()
   const pagos = ref<Pago[]>(JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]"))
   const headers = ref<string[]>([])
   watch(pagos, (val) => {
@@ -46,7 +48,7 @@ export const usePagosStore = defineStore('pagos', () => {
       const range = `${SHEET_NAME}!A:Z`
     const url = `${API_BASE}/${SPREADSHEET_ID}/values/${encodeURIComponent(range)}?key=${API_KEY}`
     const resp = await fetch(url, {
-      headers: { 'Authorization': `Bearer ${OAUTH_ACCESS_TOKEN}` }
+      headers: { 'Authorization': `Bearer ${authStore.token}` }
     })
       const data = await resp.json()
       if (Array.isArray(data.values)) {
@@ -72,7 +74,7 @@ export const usePagosStore = defineStore('pagos', () => {
     try {
     const metaUrl = `${API_BASE}/${SPREADSHEET_ID}?fields=sheets.properties&key=${API_KEY}`
     const resp = await fetch(metaUrl, {
-      headers: { 'Authorization': `Bearer ${OAUTH_ACCESS_TOKEN}` }
+      headers: { 'Authorization': `Bearer ${authStore.token}` }
     })
       const data = await resp.json()
       const sheet = data.sheets.find((s: any) => s.properties.title === SHEET_NAME)
@@ -96,7 +98,7 @@ export const usePagosStore = defineStore('pagos', () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${OAUTH_ACCESS_TOKEN}`
+          'Authorization': `Bearer ${authStore.token}`
         },
         body: JSON.stringify(body)
       })
@@ -128,7 +130,7 @@ export const usePagosStore = defineStore('pagos', () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${OAUTH_ACCESS_TOKEN}`
+          'Authorization': `Bearer ${authStore.token}`
         },
         body: JSON.stringify(body)
       })
