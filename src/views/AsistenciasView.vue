@@ -4,19 +4,20 @@
     <v-data-table
       :items="asistenciasStore.asistencias"
       :headers="headers"
-      item-value="cliente"
-      show-expand
-      expand-icon="mdi-eye"
+      item-value="id"
+      expand-on-click
+      :item-props="() => ({ class: 'cursor-pointer' })"
       v-model:expanded="expanded"
+      @update:expanded="onExpanded"
     >
       <template #item.actions="{ index }">
-        <v-menu>
+        <v-menu @click.stop>
           <template #activator="{ props }">
-            <v-btn icon="mdi-dots-vertical" v-bind="props"></v-btn>
+            <v-btn icon="mdi-dots-vertical" v-bind="props" @click.stop></v-btn>
           </template>
           <v-list>
-            <v-list-item @click="editItem(index)">Editar</v-list-item>
-            <v-list-item @click="asistenciasStore.remove(index)" class="text-error">Eliminar</v-list-item>
+            <v-list-item @click.stop="editItem(index)">Editar</v-list-item>
+            <v-list-item @click.stop="asistenciasStore.remove(index)" class="text-error">Eliminar</v-list-item>
           </v-list>
         </v-menu>
       </template>
@@ -24,8 +25,8 @@
         <tr>
           <td :colspan="columns.length">
             <div class="d-flex flex-column ga-1">
-              <div v-for="(value, key) in item" :key="key" v-if="!['asistente','ilustracion'].includes(key)">
-                <strong>{{ key }}:</strong> {{ value }}
+              <div v-for="(value, field) in item" :key="field" v-if="!['asistente','ilustracion'].includes(field)">
+                <strong>{{ field }}:</strong> {{ value }}
               </div>
               <router-link :to="{ path: '/pagos', query: { cliente: item.cliente } }">
                 <v-btn small class="mt-2">Ver pagos</v-btn>
@@ -50,7 +51,11 @@ import { useAsistenciasStore, Asistencia } from '../stores/asistencias'
 const asistenciasStore = useAsistenciasStore()
 const dialog = ref(false)
 const current = ref<Asistencia | null>(null)
-const expanded = ref<Asistencia[]>([])
+const expanded = ref<string[]>([])
+
+function onExpanded(ids: string[]) {
+  expanded.value = ids.length ? [ids.at(-1)!] : []
+}
 
 onMounted(() => {
   asistenciasStore.fetchRemote()
