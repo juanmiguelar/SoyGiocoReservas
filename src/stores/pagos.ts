@@ -15,9 +15,8 @@ export interface Pago {
 const STORAGE_KEY = 'pagos'
 
 // Configuración para consumir la API de Google Sheets
-const SPREADSHEET_ID = '1iPSpOidH44Qev9Woho-VfcAiRXxpn79AT1KgIBkAfTM'
-const API_KEY = 'AIzaSyBnP_Bd7VsKsRZ0KfhdGoS7p30oS91iHhk'
-const API_BASE = 'https://sheets.googleapis.com/v4/spreadsheets'
+import { SPREADSHEET_ID, API_KEY, API_BASE } from '../secrets'
+
 const SHEET_NAME = 'pagos'
 
 export const usePagosStore = defineStore('pagos', () => {

@@ -2,6 +2,7 @@
 
 Aplicación base en Vue 3 + Vuetify diseñada para ser compilada con Capacitor a Android. Por defecto maneja los pagos y asistencias de forma local (sin backend) usando `localStorage`.  
 Opcionalmente puede sincronizarse con Google Sheets a través del script ubicado en `appScript/script.gs`.
+Las credenciales necesarias para la API se guardan en un archivo `src/secrets.ts` que no se versiona. Utiliza la plantilla `src/secrets.example.ts` para crear tus propias claves.
 
 ## Instalación
 
