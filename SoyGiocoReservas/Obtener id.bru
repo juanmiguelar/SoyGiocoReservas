@@ -1,0 +1,23 @@
+meta {
+  name: Obtener id
+  type: http
+  seq: 4
+}
+
+get {
+  url: https://script.google.com/macros/s/AKfycbwnIipN9UWofaRWAXm-H9k4JFyRqr60G8pWTbWvEw2sR6zm-U6LHiJvglmTtJlJA4EZ/exec?id=8f85c9c7-6ef1-41e2-8af9-7d935a1e6017&token=supersecreto123
+  body: none
+  auth: none
+}
+
+query {
+  id: 8f85c9c7-6ef1-41e2-8af9-7d935a1e6017
+  token: supersecreto123
+}
+
+body:json {
+  {
+    "action": "POST",
+    "nombre": "fulano"
+  }
+}

@@ -1,0 +1,23 @@
+meta {
+  name: Obtener Pagos
+  type: http
+  seq: 1
+}
+
+get {
+  url: https://script.google.com/macros/s/AKfycbwnIipN9UWofaRWAXm-H9k4JFyRqr60G8pWTbWvEw2sR6zm-U6LHiJvglmTtJlJA4EZ/exec?token=supersecreto123&sheet=pagos
+  body: none
+  auth: none
+}
+
+query {
+  token: supersecreto123
+  sheet: pagos
+}
+
+body:json {
+  {
+    "action": "POST",
+    "nombre": "fulano"
+  }
+}
