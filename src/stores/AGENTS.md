@@ -8,3 +8,8 @@ Ahora ambos stores utilizan directamente el API de Google Sheets en lugar del
 script de Google Apps Script. Se añadieron constantes `SPREADSHEET_ID`,
 `API_KEY`, `API_BASE` y `SHEET_NAME` para configurar la llamada y construir la
 URL del rango a leer.
+
+Las funciones `add` y `remove` también actualizan la hoja. El método `add`
+utiliza la operación `append` de Google Sheets para insertar una nueva fila y
+`remove` emplea `batchUpdate` con `deleteDimension` para borrar la fila
+correspondiente.
