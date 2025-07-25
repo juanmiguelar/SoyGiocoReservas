@@ -15,8 +15,8 @@ export interface Asistencia {
 const STORAGE_KEY = 'asistencias'
 
 // Configuración para consumir la API de Google Sheets
-const SPREADSHEET_ID = 'REPLACE_WITH_ID'
-const API_KEY = 'REPLACE_WITH_API_KEY'
+const SPREADSHEET_ID = '1iPSpOidH44Qev9Woho-VfcAiRXxpn79AT1KgIBkAfTM'
+const API_KEY = 'AIzaSyBnP_Bd7VsKsRZ0KfhdGoS7p30oS91iHhk'
 const API_BASE = 'https://sheets.googleapis.com/v4/spreadsheets'
 const SHEET_NAME = 'asistencias'
 
