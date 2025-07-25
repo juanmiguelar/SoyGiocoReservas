@@ -5,18 +5,18 @@
       :items="asistenciasStore.asistencias"
       :headers="headers"
       item-value="cliente"
-      show-expand
-      expand-icon="mdi-eye"
+      expand-on-click
+      :item-props="() => ({ class: 'cursor-pointer' })"
       v-model:expanded="expanded"
     >
       <template #item.actions="{ index }">
-        <v-menu>
+        <v-menu @click.stop>
           <template #activator="{ props }">
-            <v-btn icon="mdi-dots-vertical" v-bind="props"></v-btn>
+            <v-btn icon="mdi-dots-vertical" v-bind="props" @click.stop></v-btn>
           </template>
           <v-list>
-            <v-list-item @click="editItem(index)">Editar</v-list-item>
-            <v-list-item @click="asistenciasStore.remove(index)" class="text-error">Eliminar</v-list-item>
+            <v-list-item @click.stop="editItem(index)">Editar</v-list-item>
+            <v-list-item @click.stop="asistenciasStore.remove(index)" class="text-error">Eliminar</v-list-item>
           </v-list>
         </v-menu>
       </template>
