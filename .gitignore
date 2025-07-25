@@ -2,3 +2,4 @@ node_modules/
 dist/
 android/
 src/secrets.ts
+.secret
