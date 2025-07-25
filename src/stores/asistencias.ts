@@ -20,6 +20,18 @@ import { useGoogleAuthStore } from './googleAuth'
 
 const SHEET_NAME = 'asistencias'
 let sheetId: number | null = null
+let propToHeader: Record<string, string> = {}
+let headerToProp: Record<string, string> = {}
+
+function normalizeHeader(h: string) {
+  return h
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .split(' ')
+    .map((w, i) => i === 0 ? w.toLowerCase() : w.charAt(0).toUpperCase() + w.slice(1))
+    .join('')
+    .replace(/[^a-zA-Z0-9]/g, '')
+}
 
 export const useAsistenciasStore = defineStore('asistencias', () => {
   const authStore = useGoogleAuthStore()
@@ -47,18 +59,28 @@ export const useAsistenciasStore = defineStore('asistencias', () => {
   async function fetchRemote() {
     try {
       const range = `${SHEET_NAME}!A:Z`
-    const url = `${API_BASE}/${SPREADSHEET_ID}/values/${encodeURIComponent(range)}?key=${API_KEY}`
-    const resp = await fetch(url, {
-      headers: { 'Authorization': `Bearer ${authStore.token}` }
-    })
+      const url = `${API_BASE}/${SPREADSHEET_ID}/values/${encodeURIComponent(range)}?key=${API_KEY}`
+      const resp = await fetch(url, {
+        headers: { 'Authorization': `Bearer ${authStore.token}` }
+      })
       const data = await resp.json()
       if (Array.isArray(data.values)) {
         const [hrow, ...rows] = data.values
         headers.value = hrow
+        const h2p: Record<string, string> = {}
+        const p2h: Record<string, string> = {}
+        hrow.forEach(h => {
+          const prop = normalizeHeader(h)
+          h2p[h] = prop
+          p2h[prop] = h
+        })
+        headerToProp = h2p
+        propToHeader = p2h
         asistencias.value = rows.map(row => {
           const item: any = {}
           hrow.forEach((h: string, i: number) => {
-            item[h] = row[i] || ''
+            const prop = h2p[h]
+            item[prop] = row[i] || ''
           })
           return item as Asistencia
         })
@@ -92,7 +114,7 @@ export const useAsistenciasStore = defineStore('asistencias', () => {
     const range = `${SHEET_NAME}!A:Z`
     const url = `${API_BASE}/${SPREADSHEET_ID}/values/${encodeURIComponent(range)}:append?valueInputOption=USER_ENTERED&key=${API_KEY}`
     const body = {
-      values: [headers.value.map(h => (asistencia as any)[h] || '')]
+      values: [headers.value.map(h => (asistencia as any)[headerToProp[h]] || '')]
     }
     try {
       await fetch(url, {
