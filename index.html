@@ -12,8 +12,8 @@
       window.gapiLoaded = () => window.dispatchEvent(new Event('gapi-loaded'))
       window.gisLoaded = () => window.dispatchEvent(new Event('gis-loaded'))
     </script>
-    <script src="https://accounts.google.com/gsi/client" async defer onload="gisLoaded()"></script>
-    <script src="https://apis.google.com/js/api.js" async defer onload="gapiLoaded()"></script>
     <script type="module" src="/src/main.ts"></script>
+    <script src="https://accounts.google.com/gsi/client" defer onload="gisLoaded()"></script>
+    <script src="https://apis.google.com/js/api.js" defer onload="gapiLoaded()"></script>
   </body>
 </html>
