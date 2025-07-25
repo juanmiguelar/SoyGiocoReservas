@@ -12,7 +12,7 @@ que `OAUTH_ACCESS_TOKEN` es opcional. Para operaciones de escritura se envía la
 cabecera `Authorization: Bearer <token>` usando el valor proporcionado por dicho
 store.
 
-Las funciones `add` y `remove` también actualizan la hoja. El método `add`
-utiliza la operación `append` de Google Sheets para insertar una nueva fila y
-`remove` emplea `batchUpdate` con `deleteDimension` para borrar la fila
-correspondiente.
+Las funciones `add`, `update` y `remove` también sincronizan los cambios en la
+hoja. `add` usa `append` para insertar una nueva fila, `update` envía los datos
+de la fila modificada mediante `values.update`, y `remove` utiliza
+`batchUpdate` con `deleteDimension` para eliminar la fila correspondiente.
