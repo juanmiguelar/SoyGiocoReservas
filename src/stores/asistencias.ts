@@ -33,6 +33,16 @@ function normalizeHeader(h: string) {
     .replace(/[^a-zA-Z0-9]/g, '')
 }
 
+function columnLetter(n: number) {
+  let s = ''
+  while (n > 0) {
+    const r = (n - 1) % 26
+    s = String.fromCharCode(65 + r) + s
+    n = Math.floor((n - 1) / 26)
+  }
+  return s
+}
+
 export const useAsistenciasStore = defineStore('asistencias', () => {
   const authStore = useGoogleAuthStore()
   const asistencias = ref<Asistencia[]>(JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]"))
@@ -49,6 +59,7 @@ export const useAsistenciasStore = defineStore('asistencias', () => {
 
   function update(index: number, asistencia: Asistencia) {
     asistencias.value[index] = asistencia
+    updateRemote(index, asistencia)
   }
 
   function remove(index: number) {
@@ -119,6 +130,29 @@ export const useAsistenciasStore = defineStore('asistencias', () => {
     try {
       await fetch(url, {
         method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${authStore.token}`
+        },
+        body: JSON.stringify(body)
+      })
+    } catch (err) {
+      console.error(err)
+    }
+  }
+
+  async function updateRemote(index: number, asistencia: Asistencia) {
+    if (!headers.value.length) return
+    const row = index + 2
+    const lastCol = columnLetter(headers.value.length)
+    const range = `${SHEET_NAME}!A${row}:${lastCol}${row}`
+    const url = `${API_BASE}/${SPREADSHEET_ID}/values/${encodeURIComponent(range)}?valueInputOption=USER_ENTERED&key=${API_KEY}`
+    const body = {
+      values: [headers.value.map(h => (asistencia as any)[headerToProp[h]] || '')]
+    }
+    try {
+      await fetch(url, {
+        method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${authStore.token}`
