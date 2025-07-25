@@ -25,8 +25,8 @@
         <tr>
           <td :colspan="columns.length">
             <div class="d-flex flex-column ga-1">
-              <div v-for="(value, key) in item" :key="key" v-if="!['asistente','ilustracion'].includes(key)">
-                <strong>{{ key }}:</strong> {{ value }}
+              <div v-for="(value, field) in item" :key="field" v-if="!['asistente','ilustracion'].includes(field)">
+                <strong>{{ field }}:</strong> {{ value }}
               </div>
               <router-link :to="{ path: '/pagos', query: { cliente: item.cliente } }">
                 <v-btn small class="mt-2">Ver pagos</v-btn>
