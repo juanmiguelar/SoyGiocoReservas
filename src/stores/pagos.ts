@@ -1,6 +1,5 @@
 import { defineStore } from 'pinia'
 import { ref, watch } from 'vue'
-import fetchJsonp from 'fetch-jsonp'
 
 export interface Pago {
   cliente: string
@@ -14,8 +13,12 @@ export interface Pago {
 }
 
 const STORAGE_KEY = 'pagos'
-const API_URL = 'https://script.google.com/macros/s/AKfycbwnIipN9UWofaRWAXm-H9k4JFyRqr60GpWTbWvEw2sR6zm-U6LHiJvglmTtJlJA4EZ/exec'
-const TOKEN   = 'supersecreto123'
+
+// Configuración para consumir la API de Google Sheets
+const SPREADSHEET_ID = 'REPLACE_WITH_ID'
+const API_KEY = 'REPLACE_WITH_API_KEY'
+const API_BASE = 'https://sheets.googleapis.com/v4/spreadsheets'
+const SHEET_NAME = 'pagos'
 
 export const usePagosStore = defineStore('pagos', () => {
   const pagos = ref<Pago[]>(JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]"))
@@ -37,13 +40,19 @@ export const usePagosStore = defineStore('pagos', () => {
 
   async function fetchRemote() {
     try {
-      const resp = await fetchJsonp(
-        `${API_URL}?token=${TOKEN}&sheet=pagos`,
-        { jsonpCallback: 'callback' }
-      )
+      const range = `${SHEET_NAME}!A:Z`
+      const url = `${API_BASE}/${SPREADSHEET_ID}/values/${encodeURIComponent(range)}?key=${API_KEY}`
+      const resp = await fetch(url)
       const data = await resp.json()
-      if (Array.isArray(data.params)) {
-        pagos.value = data.params
+      if (Array.isArray(data.values)) {
+        const [headers, ...rows] = data.values
+        pagos.value = rows.map(row => {
+          const item: any = {}
+          headers.forEach((h: string, i: number) => {
+            item[h] = row[i] || ''
+          })
+          return item as Pago
+        })
       } else {
         throw new Error('Respuesta inesperada')
       }
