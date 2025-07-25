@@ -1,6 +1,5 @@
 import { defineStore } from 'pinia'
 import { ref, watch } from 'vue'
-import fetchJsonp from 'fetch-jsonp'
 
 export interface Asistencia {
   cliente: string
@@ -14,8 +13,12 @@ export interface Asistencia {
 }
 
 const STORAGE_KEY = 'asistencias'
-const API_URL = 'https://script.google.com/macros/s/AKfycbwnIipN9UWofaRWAXm-H9k4JFyRqr60GpWTbWvEw2sR6zm-U6LHiJvglmTtJlJA4EZ/exec'
-const TOKEN   = 'supersecreto123'
+
+// Configuración para consumir la API de Google Sheets
+const SPREADSHEET_ID = 'REPLACE_WITH_ID'
+const API_KEY = 'REPLACE_WITH_API_KEY'
+const API_BASE = 'https://sheets.googleapis.com/v4/spreadsheets'
+const SHEET_NAME = 'asistencias'
 
 export const useAsistenciasStore = defineStore('asistencias', () => {
   const asistencias = ref<Asistencia[]>(JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]"))
@@ -37,21 +40,27 @@ export const useAsistenciasStore = defineStore('asistencias', () => {
   }
 
   async function fetchRemote() {
-      try {
-        const resp = await fetchJsonp(
-          `${API_URL}?token=${TOKEN}&sheet=pagos`,
-          { jsonpCallback: 'callback' }
-        )
-        const data = await resp.json()
-        if (Array.isArray(data.params)) {
-          asistencias.value = data.params
-        } else {
-          throw new Error('Respuesta inesperada')
-        }
-      } catch (err: any) {
-        console.error(err)
+    try {
+      const range = `${SHEET_NAME}!A:Z`
+      const url = `${API_BASE}/${SPREADSHEET_ID}/values/${encodeURIComponent(range)}?key=${API_KEY}`
+      const resp = await fetch(url)
+      const data = await resp.json()
+      if (Array.isArray(data.values)) {
+        const [headers, ...rows] = data.values
+        asistencias.value = rows.map(row => {
+          const item: any = {}
+          headers.forEach((h: string, i: number) => {
+            item[h] = row[i] || ''
+          })
+          return item as Asistencia
+        })
+      } else {
+        throw new Error('Respuesta inesperada')
       }
+    } catch (err: any) {
+      console.error(err)
     }
+  }
 
   return { asistencias, add, update, remove, fetchRemote }
 })
