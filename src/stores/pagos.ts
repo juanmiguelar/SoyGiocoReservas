@@ -15,7 +15,7 @@ export interface Pago {
 const STORAGE_KEY = 'pagos'
 
 // Configuración para consumir la API de Google Sheets
-import { SPREADSHEET_ID, API_KEY, API_BASE } from '../secrets'
+import { SPREADSHEET_ID, API_KEY, API_BASE, OAUTH_ACCESS_TOKEN } from '../secrets'
 
 const SHEET_NAME = 'pagos'
 let sheetId: number | null = null
@@ -44,8 +44,10 @@ export const usePagosStore = defineStore('pagos', () => {
   async function fetchRemote() {
     try {
       const range = `${SHEET_NAME}!A:Z`
-      const url = `${API_BASE}/${SPREADSHEET_ID}/values/${encodeURIComponent(range)}?key=${API_KEY}`
-      const resp = await fetch(url)
+    const url = `${API_BASE}/${SPREADSHEET_ID}/values/${encodeURIComponent(range)}?key=${API_KEY}`
+    const resp = await fetch(url, {
+      headers: { 'Authorization': `Bearer ${OAUTH_ACCESS_TOKEN}` }
+    })
       const data = await resp.json()
       if (Array.isArray(data.values)) {
         const [hrow, ...rows] = data.values
@@ -68,8 +70,10 @@ export const usePagosStore = defineStore('pagos', () => {
   async function getSheetId() {
     if (sheetId !== null) return sheetId
     try {
-      const metaUrl = `${API_BASE}/${SPREADSHEET_ID}?fields=sheets.properties&key=${API_KEY}`
-      const resp = await fetch(metaUrl)
+    const metaUrl = `${API_BASE}/${SPREADSHEET_ID}?fields=sheets.properties&key=${API_KEY}`
+    const resp = await fetch(metaUrl, {
+      headers: { 'Authorization': `Bearer ${OAUTH_ACCESS_TOKEN}` }
+    })
       const data = await resp.json()
       const sheet = data.sheets.find((s: any) => s.properties.title === SHEET_NAME)
       sheetId = sheet.properties.sheetId
@@ -90,7 +94,10 @@ export const usePagosStore = defineStore('pagos', () => {
     try {
       await fetch(url, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${OAUTH_ACCESS_TOKEN}`
+        },
         body: JSON.stringify(body)
       })
     } catch (err) {
@@ -119,7 +126,10 @@ export const usePagosStore = defineStore('pagos', () => {
     try {
       await fetch(url, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${OAUTH_ACCESS_TOKEN}`
+        },
         body: JSON.stringify(body)
       })
     } catch (err) {
