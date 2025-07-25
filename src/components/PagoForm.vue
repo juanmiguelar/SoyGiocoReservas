@@ -8,13 +8,26 @@
     >
       <div class="flex-grow-1 overflow-y-auto">
         <v-text-field v-model="form.cliente" label="Cliente" :rules="[v=>!!v||'Requerido']" required></v-text-field>
-        <v-text-field v-model="form.contacto" label="Contacto"></v-text-field>
+        <v-select
+          v-model="form.contacto"
+          :items="['Whatsapp', 'instagram', 'facebook']"
+          label="Contacto"
+          clearable
+        ></v-select>
+        <v-text-field
+          v-model.number="form.cantidad"
+          label="Cantidad"
+          type="number"
+          :rules="[v => v === '' || !isNaN(Number(v)) || 'Solo números']"
+        ></v-text-field>
         <v-text-field v-model="form.pago1" label="Pago 1"></v-text-field>
-        <v-text-field v-model="form.pago2" label="Pago 2"></v-text-field>
-        <v-text-field v-model="form.pendientes" label="Pendientes"></v-text-field>
         <v-text-field v-model="form.correo" label="Correo"></v-text-field>
         <v-text-field v-model="form.cedula" label="Cédula"></v-text-field>
-        <v-text-field v-model="form.telefono" label="Teléfono"></v-text-field>
+        <v-text-field
+          v-if="form.contacto === 'Whatsapp'"
+          v-model="form.telefono"
+          label="Teléfono"
+        ></v-text-field>
       </div>
       <div class="d-flex justify-end mt-4">
         <v-btn type="submit" color="primary" class="mr-2">Guardar</v-btn>
@@ -39,7 +52,9 @@ const form = reactive<Pago>({
   pendientes: '',
   correo: '',
   cedula: '',
-  telefono: ''
+  telefono: '',
+  idCliente: '',
+  cantidad: ''
 })
 
 onMounted(() => {

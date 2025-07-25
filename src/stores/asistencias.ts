@@ -2,9 +2,9 @@ import { defineStore } from 'pinia'
 import { ref, watch } from 'vue'
 
 export interface Asistencia {
-  cliente: string
+  id: string
+  idCliente: string
   asistente: string
-  taller: string
   disenoElegido: string
   disenoApoyo: string
   disenoRealizado: string
@@ -53,6 +53,13 @@ export const useAsistenciasStore = defineStore('asistencias', () => {
   }, { deep: true })
 
   function add(asistencia: Asistencia) {
+    if (!asistencia.id) {
+      asistencia.id = crypto.randomUUID()
+    }
+    if (!asistencia.idCliente) {
+      console.warn('Asistencia debe tener un idCliente')
+      return
+    }
     asistencias.value.push(asistencia)
     appendRemote(asistencia)
   }
@@ -80,14 +87,14 @@ export const useAsistenciasStore = defineStore('asistencias', () => {
         headers.value = hrow
         const h2p: Record<string, string> = {}
         const p2h: Record<string, string> = {}
-        hrow.forEach(h => {
+        hrow.forEach((h: string) => {
           const prop = normalizeHeader(h)
           h2p[h] = prop
           p2h[prop] = h
         })
         headerToProp = h2p
         propToHeader = p2h
-        asistencias.value = rows.map(row => {
+        asistencias.value = rows.map((row: string[]) => {
           const item: any = {}
           hrow.forEach((h: string, i: number) => {
             const prop = h2p[h]

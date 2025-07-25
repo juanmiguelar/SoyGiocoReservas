@@ -24,7 +24,7 @@
         <tr>
           <td :colspan="columns.length">
             <div class="d-flex flex-column ga-1">
-              <div v-for="(value, key) in item" :key="key" v-if="!['cliente','disenoRealizado'].includes(key)">
+              <div v-for="(value, key) in item" :key="key" v-if="!['asistente','ilustracion'].includes(key)">
                 <strong>{{ key }}:</strong> {{ value }}
               </div>
               <router-link :to="{ path: '/pagos', query: { cliente: item.cliente } }">
@@ -57,8 +57,8 @@ onMounted(() => {
 })
 
 const headers = [
-  { title: 'Cliente', key: 'cliente' },
-  { title: 'Diseño', key: 'disenoRealizado' },
+  { title: 'Asistente', key: 'asistente' },
+  { title: 'Ilustración', key: 'ilustracion' },
   { title: 'Acciones', key: 'actions', sortable: false }
 ]
 

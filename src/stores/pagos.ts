@@ -2,8 +2,10 @@ import { defineStore } from 'pinia'
 import { ref, watch } from 'vue'
 
 export interface Pago {
+  idCliente: string
   cliente: string
   contacto: string
+  cantidad: string
   pago1: string
   pago2: string
   pendientes: string
@@ -52,6 +54,9 @@ export const usePagosStore = defineStore('pagos', () => {
   }, { deep: true })
 
   function add(pago: Pago) {
+    if (!pago.idCliente) {
+      pago.idCliente = crypto.randomUUID()
+    }
     pagos.value.push(pago)
     appendRemote(pago)
   }
@@ -79,14 +84,14 @@ export const usePagosStore = defineStore('pagos', () => {
         headers.value = hrow
         const h2p: Record<string, string> = {}
         const p2h: Record<string, string> = {}
-        hrow.forEach(h => {
+        hrow.forEach((h: string) => {
           const prop = normalizeHeader(h)
           h2p[h] = prop
           p2h[prop] = h
         })
         headerToProp = h2p
         propToHeader = p2h
-        pagos.value = rows.map(row => {
+        pagos.value = rows.map((row: string[]) => {
           const item: any = {}
           hrow.forEach((h: string, i: number) => {
             const prop = h2p[h]
